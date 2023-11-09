@@ -111,5 +111,5 @@ conexion.close()
 Traceback (most recent call last):
   File "/home/senatech/Desktop/prog.py", line 2, in <module>
     import pandas as pd
-ModuleNotFoundError: No module named 'pandas'
+ModuleNotFoundError: No module named 'pandas'\
 
