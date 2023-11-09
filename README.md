@@ -108,8 +108,54 @@ while True:
 conexion.commit()
 conexion.close()
 
-Traceback (most recent call last):
-  File "/home/senatech/Desktop/prog.py", line 2, in <module>
-    import pandas as pd
-ModuleNotFoundError: No module named 'pandas'\
+import serial
 
+# Constantes específicas de tu sensor de temperatura
+pendiente_temperatura = 104.0  # Ree
+
+#remplaza con la pendiente correcta
+temperatura_minima = -20.0  # Reemplaza con la intersección correcta
+frecuencia_maxima = 1000
+
+# Constantes específicas de tu sensor de vibración
+pendiente_vibracion = 5.0  # Reemplaza con la pendiente correcta
+interseccion_vibracion = 0.0  # Reemplaza con la intersección correcta
+
+#
+valor_maximo = 1023
+voltaje_maximo = 5.0
+
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+ser.flushInput()
+
+while True:
+    try:
+        datos_temperatura = ser.readline().decode('utf-8').strip()
+        
+        datos_vibracion = ser.readline().decode('utf-8').strip()
+        
+        voltaje_temperatura = (voltaje_maximo / valor_maximo) * float(datos_temperatura)
+        frecuencia_vibracion = float(datos_vibracion) * (frecuencia_maxima / valor_maximo)
+        
+        # Convierte el valor del voltaje a temperatura
+        temperatura = pendiente_temperatura * voltaje_temperatura + temperatura_minima
+        #temperatura = voltaje_maximo / valor_maximo * float(datos_temperatura) * 100 - temperatura_minima
+    
+        
+        print(f"Datos enviados por el Arduino para la temperatura: {datos_temperatura}")
+        print(f"Voltaje Temperatura: {voltaje_temperatura} V")
+        print(f"Temperatura: {temperatura}°C")
+        print("_____________________")
+        print("")
+        
+        print(f"Datos enviados por el Arduino para la vibración : {datos_vibracion}")
+        print(f"Frecuencia vibracion: {frecuencia_vibracion} Hz")
+        #print(f"vibracion: {vibracion}")
+        #print(f"Voltaje Vibración: {voltaje_vibracion} V, Vibración: {vibracion} unidades")
+        print("_____________________")
+        print("")
+        
+    except KeyboardInterrupt:
+        break
+
+ser.close()
